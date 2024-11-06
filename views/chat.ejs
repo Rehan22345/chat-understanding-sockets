@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .chat-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-box {
+            width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.25em;
+            font-weight: bold;
+        }
+        .chat-messages {
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f9f9f9;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            margin-bottom: 10px;
+            background-color: #e9ecef;
+            word-wrap: break-word;
+        }
+        .message.user2 {
+            background-color: #cce5ff;
+            align-self: flex-end;
+        }
+        .chat-input {
+            padding: 15px;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-input input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        .chat-input button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box">
+            <div class="chat-header">
+                Chat Room
+            </div>
+
+            <div id="messages" class="chat-messages">
+                <!-- Messages will be dynamically added here -->
+                <div class="message user1">
+                    <strong>User1:</strong> Hello, how are you?
+                </div>
+                <div class="message user2">
+                    <strong>User2:</strong> I'm good, thanks! How about you?
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+
+    <script>
+        const socket = io();
+        const btn = document.getElementById("sendButton");
+
+        btn.addEventListener("click", () => {
+            let data = document.getElementById("messageInput").value;
+            if (data === "") return alert("Please provide a message.");
+            socket.emit("messages", data);
+        });
+
+        socket.on("msg", (msg) => {
+            let messageElement = document.createElement("div");
+            messageElement.classList.add("message", "user2");
+            messageElement.innerHTML = `<strong>User2:</strong> ${msg}`;
+            document.getElementById("messages").appendChild(messageElement);
+        });
+    </script>
+</body>
+</html>
